@@ -1,4 +1,4 @@
-Twitch Sreamer
+Twitch Streamer
 --------------
 
 
