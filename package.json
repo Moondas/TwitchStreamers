@@ -4,13 +4,15 @@
   "description": "A [freeCodeCamp](https://www.freecodecamp.com/) [challenge](https://www.freecodecamp.com/challenges/use-the-twitchtv-json-api), that get JSON from [Twitch API](https://dev.twitch.tv/docs/v5/reference/streams/#get-stream-by-user) built with:\r - HTML5\r - CSS3\r - BootStrap\r - JS\r   - jQuery\r   - Ajax\r   - JSON",
   "main": "index.js",
   "dependencies": {
-    "@types/jquery": "^3.3.0",
     "bootstrap": "^3.3.7",
+    "jquery": "^3.3.1",
+    "requirejs": "^2.3.5",
     "reset-css": "^2.2.1",
     "typescript": "^2.7.2"
   },
   "devDependencies": {
-    "jquery": "^3.3.1"
+    "@types/jquery": "^3.3.0",
+    "@types/requirejs": "^2.1.31"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

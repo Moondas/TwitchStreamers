@@ -1,5 +1,6 @@
 import { dictionary } from "./types";
-import { apiUrlTypes, Channel, Stream } from "./models";
+import { apiUrlTypes, Channel, Stream, Streamer } from "./models";
+import { StreamerListItem } from "./streamer-list-item";
 
 class Streamers {
   public users: string[] = [
@@ -61,34 +62,11 @@ function displayStreamers(stream: Stream, channel: Channel, listFilter: string, 
     return;
   }
 
-  let div: JQuery<HTMLElement> = $(`<div></div>`).addClass("row");
-  channel = stream ? stream.channel : channel;
-  channel.logo = !channel.logo ? "https://dummyimage.com/50x50/555555/777777.jpg&text=0x00" : channel.logo;
+  let streamer = new StreamerListItem();
 
-  let imgTemplate =
-   `<div class="col-xs-1">
-      <img src="${channel.logo}" class="img-circle${stream === null ? " offline" : ""}" alt="logo">
-    </div>`
-
-  let userTemplate =
-    `<div class="col-xs-11">
-      <p>${channel.display_name ? channel.display_name : username}
-        ${
-          hasErrorCode
-            ? `${channel.status == 404 ? "(Not found)" : "(Closed)"}`
-            : `${stream ? `(Online)<br>${channel.status}` : `(Offline)`}`
-        }
-      </p>
-    </div>`;
-
-  $(div).on("click", function() {
-    window.open(channel.url)
-  });
-
-  $(div).append(imgTemplate, userTemplate);
-
-  // Add online users to top of the list
-  stream ? $(".main").prepend(div) : $(".main").append(div);
+  streamer.fill(stream, channel, username);
+  streamer.setTemplates();
+  streamer.render();
 }
 
 $( // Tab switcher for filter list

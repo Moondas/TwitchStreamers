@@ -5,16 +5,13 @@
     <link rel="stylesheet prefetch" href="./node_modules/reset-css/reset.css">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="./scripts/script.js"></script>
     <title>Twitch Streamers</title>
   </head>
   <body>
-  <!-- For Free Code Camp front end challange:
-  https://www.freecodecamp.com/challenges/use-the-twitchtv-json-api -->
+    <!-- For Free Code Camp front end challange:
+      https://www.freecodecamp.com/challenges/use-the-twitchtv-json-api -->
     <div class="container">
-      <header class=" text-center">
+      <header class="text-center">
         <h1>Twitch Streamers</h1>
       </header>
       <main>
@@ -23,13 +20,21 @@
         </div>
         <div class="col-sm-1">
           <ul class="nav nav-pills nav-stacked vertical-text text-center">
-            <li class="active" id="all"><a href="#" data-toggle="tab">All</a></li>
-            <li id="online"><a href="#" data-toggle="tab">Online</a></li>
-            <li id="offline"><a href="#" data-toggle="tab">Offline</a></li>
+            <li class="active" id="all">
+              <a href="#" data-toggle="tab">All</a>
+            </li>
+            <li id="online">
+              <a href="#" data-toggle="tab">Online</a>
+            </li>
+            <li id="offline">
+              <a href="#" data-toggle="tab">Offline</a>
+            </li>
           </ul>
-          </div>
         </div>
       </main>
     </div>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="./node_modules/requirejs/require.js" data-main="scripts/config"></script>
   </body>
 </html>

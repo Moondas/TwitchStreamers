@@ -10,6 +10,20 @@ export class Channel {
     public status: (string | number);
 }
 
-export type Stream = {
+export interface Stream {
     channel: Channel
+}
+  
+export class Streamer {
+  public name: string;
+  public status: string;
+  public message: string;
+  public logo: string;
+  public url: string;
+  public isOnline: boolean;
+}
+
+export class htmlTemplates {
+  public imgTemplate: string;
+  public userTemplate: string;
 }
