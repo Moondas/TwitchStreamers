@@ -7,8 +7,7 @@
     "@types/jquery": "^3.3.0",
     "bootstrap": "^3.3.7",
     "reset-css": "^2.2.1",
-    "typescript": "^2.7.2",
-    "webpack": "^3.11.0"
+    "typescript": "^2.7.2"
   },
   "devDependencies": {
     "jquery": "^3.3.1"

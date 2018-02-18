@@ -1,8 +1,8 @@
 import { dictionary } from "./types";
 import { apiUrlTypes, Channel, Stream } from "./models";
 
-function getInfo(listType: string = "all"): void {
-  const users: string[] = [
+class Streamers {
+  public users: string[] = [
     "ESL_SC2",
     "OgamingSC2",
     "cretetion",
@@ -15,78 +15,80 @@ function getInfo(listType: string = "all"): void {
     "comster404"
   ];
 
-  const apiUrls: apiUrlTypes = {
+  public apiUrls: apiUrlTypes = {
     streams: "https://wind-bow.glitch.me/twitch-api/streams/",
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
 
-  $(".main").empty();
+  public constructor() {
+    //  
+  }
 
-  users.forEach(
-    user => {
-      $.when(
-        $.getJSON(apiUrls.streams + user),
-        $.getJSON(apiUrls.channels + user)
-      ).done(
-        (stream, channel) => displayStreamers(<Stream>stream[0].stream, <Channel>channel[0], listType, user)
-      );
-    }
-  );
+  public clearList() {
+    $(".main").empty();
+  }
+
+  public getStreamDatas(listType: string) {
+    this.users.forEach(
+      user => {
+        $.when(
+          $.getJSON(this.apiUrls.streams + user),
+          $.getJSON(this.apiUrls.channels + user)
+        ).done(
+          (stream, channel) =>
+            displayStreamers(<Stream>stream[0].stream, <Channel>channel[0], listType, user)
+        );
+      }
+    );
+  }
+
 }
 
-function displayStreamers(stream: Stream, channel: Channel, listType: string, user: string) {
-  let div = $("<div></div>");
-  let hasErrorCode: boolean = ($.isNumeric(channel.status));
-  if (stream && !hasErrorCode && stream.channel) {
-    channel = stream.channel;
+function getInfo(listType: string = "all"): void {
+  let streamers = new Streamers();
+  streamers.clearList();
+  streamers.getStreamDatas(listType);
+}
+
+function displayStreamers(stream: Stream, channel: Channel, listFilter: string, username: string) {
+  let hasErrorCode: boolean = (typeof channel.status === "number");
+  
+  // Exit iteration, if it doesn't meet any options
+  if (!(listFilter == "all" ||
+        (listFilter == "online" && stream) ||
+        (listFilter == "offline" && stream == null && !hasErrorCode))
+  ) {
+    return;
   }
-  if (!channel["logo"]) {
-    channel.logo = "https://dummyimage.com/50x50/555555/777777.jpg&text=0x00";
-  }
-  //console.log(channel);
 
-  var pImg = $("<div></div>").addClass("col-xs-1");
-  var img = $(`<img src="${channel.logo}" alt="logo">`);
-  $(img).addClass("img-circle");
-  if (stream == null) $(img).addClass("offline");
+  let div: JQuery<HTMLElement> = $(`<div></div>`).addClass("row");
+  channel = stream ? stream.channel : channel;
+  channel.logo = !channel.logo ? "https://dummyimage.com/50x50/555555/777777.jpg&text=0x00" : channel.logo;
 
-  $(pImg).append(img);
+  let imgTemplate =
+   `<div class="col-xs-1">
+      <img src="${channel.logo}" class="img-circle${stream === null ? " offline" : ""}" alt="logo">
+    </div>`
 
-  $(div).append(pImg);
-
-  $(div).attr("data-link", channel.url);
+  let userTemplate =
+    `<div class="col-xs-11">
+      <p>${channel.display_name ? channel.display_name : username}
+        ${
+          hasErrorCode
+            ? `${channel.status == 404 ? "(Not found)" : "(Closed)"}`
+            : `${stream ? `(Online)<br>${channel.status}` : `(Offline)`}`
+        }
+      </p>
+    </div>`;
 
   $(div).on("click", function() {
-    window.open(
-      $(this).attr("data-link")
-    )
+    window.open(channel.url)
   });
 
-  $(div).addClass("row");
+  $(div).append(imgTemplate, userTemplate);
 
-  if (
-    listType == "all" ||
-    (listType == "online" && stream) ||
-    (listType == "offline" && stream == null && !hasErrorCode)
-  ) {
-    $(div).append(
-      '<div class="col-xs-11"><p>' +
-      (hasErrorCode
-          ? user + " (" + (channel.status == 422 ? "Closed" : "Not found") + ")"
-          : stream
-              ? `${channel.display_name} (Online)<br>${channel.status}`
-              : `${channel.display_name} (Offline)`) +
-        "</p></div>"
-    );
-
-    // Make online users to top of the list
-    if (stream) {
-      $(".main").prepend(div);
-    }
-    else {
-      $(".main").append(div);
-    }
-  }
+  // Add online users to top of the list
+  stream ? $(".main").prepend(div) : $(".main").append(div);
 }
 
 $( // Tab switcher for filter list
