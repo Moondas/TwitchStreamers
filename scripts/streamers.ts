@@ -3,7 +3,7 @@ import { apiUrlTypes, Channel, Stream, Streamer, Singleton } from "./models";
 import { StreamerListItem } from "./streamer-list-item";
 
 class Streamers extends Singleton {
-  public users: string[] = [
+  private _users: string[] = [
     "ESL_SC2",
     "OgamingSC2",
     "cretetion",
@@ -16,25 +16,28 @@ class Streamers extends Singleton {
     "comster404"
   ];
 
-  public apiUrls: apiUrlTypes = {
+  private _apiUrls: apiUrlTypes = {
     streams: "https://wind-bow.glitch.me/twitch-api/streams/",
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
 
   private _streamerListItem: StreamerListItem = StreamerListItem.Instance;
+  private _batchNo: number = 0;
 
-  public clearList() {
+  public clearList(): void {
     $(".main").empty();
   }
 
-  public getStreamDatas(callback: (stream: Stream, channel: Channel, user: string) => void): void {
-    this.users.forEach(
+  public getStreamDatas(callback: (stream: Stream, channel: Channel, user: string, batchNo?: number) => void): void {
+    // This line is important to provide request order
+    let batchNo = ++this._batchNo;
+    this._users.forEach(
       user => {
         $.when(
-          $.getJSON(this.apiUrls.streams + user),
-          $.getJSON(this.apiUrls.channels + user)
+          $.getJSON(this._apiUrls.streams + user),
+          $.getJSON(this._apiUrls.channels + user)
         ).done(
-          (stream, channel) => callback(stream[0].stream, channel[0], user)
+          (stream, channel) => callback(stream[0].stream, channel[0], user, batchNo)
         );
       }
     );
@@ -43,17 +46,18 @@ class Streamers extends Singleton {
   public list(listFilter: string = "all"): void {
     this.clearList();
     this.getStreamDatas(
-      (stream, channel, user) => {
+      (stream, channel, user, batchNo) => {
         let hasErrorCode: boolean = (typeof channel.status === "number");
     
-        // Exit iteration, if it doesn't meet any options
-        if (!(listFilter == "all" ||
+        // Exit iteration, if it doesn't meet any options, and drop older items by batchNo tagging
+        if (!(this._batchNo == batchNo &&
+          (listFilter == "all" ||
             (listFilter == "online" && stream) ||
-            (listFilter == "offline" && stream == null && !hasErrorCode))
+            (listFilter == "offline" && stream == null && !hasErrorCode)))
         ) {
           return;
         }
-        
+
         this._streamerListItem.fill(stream, channel, user);
         this._streamerListItem.render();
       }

@@ -22,7 +22,7 @@ export class Streamer {
   public url: string;  
   public isOnline: boolean;
 
-  public fill(filler) {
+  public fill(filler: Object) {
     Object.assign(this, filler);
     this.isOnline = this.status == "(Online)";   
   }
