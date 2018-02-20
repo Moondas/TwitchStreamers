@@ -27,3 +27,20 @@ export class Streamer {
     this.isOnline = this.status == "(Online)";   
   }
 }
+
+export class Singleton {
+  protected static _instance;
+
+  protected constructor() {
+    // Protect from instantiation
+  }
+
+  public static get Instance() {
+    if (this._instance) {
+      return this._instance;
+    } else {
+      return this._instance = new this;
+    }
+  }
+
+}

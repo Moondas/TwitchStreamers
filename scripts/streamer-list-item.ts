@@ -1,13 +1,7 @@
-import { Channel, Stream, Streamer } from "./models";
+import { Channel, Stream, Streamer, Singleton } from "./models";
 
-export class StreamerListItem {
+export class StreamerListItem extends Singleton {
   private _streamer: Streamer;
-
-  public constructor(stream?: Stream, channel?: Channel, user?: string) {
-    if (stream && channel && user) {
-      this.fill(stream, channel, user);
-    }
-  }
 
   public fill(stream: Stream, channel: Channel, user: string) {
     channel = stream ? stream.channel : channel;
@@ -24,8 +18,7 @@ export class StreamerListItem {
         message: !hasErrorCode ? <string>channel.status : "",
         logo: !channel.logo ? "https://dummyimage.com/50x50/555555/777777.jpg&text=0x00" : channel.logo,
         url: channel.url
-      })
-
+      });
   }
 
   public render() {

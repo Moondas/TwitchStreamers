@@ -1,8 +1,8 @@
 import { dictionary } from "./types";
-import { apiUrlTypes, Channel, Stream, Streamer } from "./models";
+import { apiUrlTypes, Channel, Stream, Streamer, Singleton } from "./models";
 import { StreamerListItem } from "./streamer-list-item";
 
-class Streamers {
+class Streamers extends Singleton {
   public users: string[] = [
     "ESL_SC2",
     "OgamingSC2",
@@ -21,9 +21,7 @@ class Streamers {
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
 
-  public constructor() {
-    //  
-  }
+  private _streamerListItem: StreamerListItem = StreamerListItem.Instance;
 
   public clearList() {
     $(".main").empty();
@@ -56,9 +54,8 @@ class Streamers {
           return;
         }
         
-        let streamer = new StreamerListItem();
-        streamer.fill(stream, channel, user);
-        streamer.render();
+        this._streamerListItem.fill(stream, channel, user);
+        this._streamerListItem.render();
       }
     );
   }  
@@ -66,7 +63,7 @@ class Streamers {
 
 $( // Tab switcher for filter list
   () => {
-    let streamers = new Streamers;
+    let streamers = Streamers.Instance;
     $("li").on("click", function() { // Important to use anonymus function for "this" variable
       $(".active").removeClass("active");
       $(this).addClass("active");

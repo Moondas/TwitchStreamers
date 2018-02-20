@@ -2,4 +2,4 @@ requirejs.config({
   baseUrl: '.'
 });
 
-requirejs(['scripts/script']);
+requirejs(['scripts/streamers']);
