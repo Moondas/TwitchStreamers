@@ -29,52 +29,48 @@ class Streamers {
     $(".main").empty();
   }
 
-  public getStreamDatas(listType: string) {
+  public getStreamDatas(callback: (stream: Stream, channel: Channel, user: string) => void): void {
     this.users.forEach(
       user => {
         $.when(
           $.getJSON(this.apiUrls.streams + user),
           $.getJSON(this.apiUrls.channels + user)
         ).done(
-          (stream, channel) =>
-            displayStreamers(<Stream>stream[0].stream, <Channel>channel[0], listType, user)
+          (stream, channel) => callback(stream[0].stream, channel[0], user)
         );
       }
     );
   }
-
-}
-
-function getInfo(listType: string = "all"): void {
-  let streamers = new Streamers();
-  streamers.clearList();
-  streamers.getStreamDatas(listType);
-}
-
-function displayStreamers(stream: Stream, channel: Channel, listFilter: string, username: string) {
-  let hasErrorCode: boolean = (typeof channel.status === "number");
   
-  // Exit iteration, if it doesn't meet any options
-  if (!(listFilter == "all" ||
-        (listFilter == "online" && stream) ||
-        (listFilter == "offline" && stream == null && !hasErrorCode))
-  ) {
-    return;
-  }
-
-  let streamer = new StreamerListItem();
-
-  streamer.fill(stream, channel, username);
-  streamer.setTemplates();
-  streamer.render();
+  public list(listFilter: string = "all"): void {
+    this.clearList();
+    this.getStreamDatas(
+      (stream, channel, user) => {
+        let hasErrorCode: boolean = (typeof channel.status === "number");
+    
+        // Exit iteration, if it doesn't meet any options
+        if (!(listFilter == "all" ||
+            (listFilter == "online" && stream) ||
+            (listFilter == "offline" && stream == null && !hasErrorCode))
+        ) {
+          return;
+        }
+        
+        let streamer = new StreamerListItem();
+        streamer.fill(stream, channel, user);
+        streamer.render();
+      }
+    );
+  }  
 }
 
 $( // Tab switcher for filter list
   () => {
+    let streamers = new Streamers;
     $("li").on("click", function() { // Important to use anonymus function for "this" variable
       $(".active").removeClass("active");
       $(this).addClass("active");
-      getInfo($(this).attr("id"));
+      streamers.list($(this).attr("id"));
     });
-  getInfo();
+  streamers.list();
 });

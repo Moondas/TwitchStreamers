@@ -1,17 +1,17 @@
-export class apiUrlTypes {
-    public streams: string;
-    public channels: string;
+export interface apiUrlTypes {
+  streams: string;
+  channels: string;
 }
 
-export class Channel {
-    public url: string;
-    public logo: string;
-    public display_name: string;
-    public status: (string | number);
+export interface Channel {
+  url: string;
+  logo: string;
+  display_name: string;
+  status: (string | number);
 }
 
 export interface Stream {
-    channel: Channel
+  channel: Channel
 }
   
 export class Streamer {
@@ -19,11 +19,11 @@ export class Streamer {
   public status: string;
   public message: string;
   public logo: string;
-  public url: string;
+  public url: string;  
   public isOnline: boolean;
-}
 
-export class htmlTemplates {
-  public imgTemplate: string;
-  public userTemplate: string;
+  public fill(filler) {
+    Object.assign(this, filler);
+    this.isOnline = this.status == "(Online)";   
+  }
 }

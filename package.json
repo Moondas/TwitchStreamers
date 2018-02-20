@@ -15,7 +15,8 @@
     "@types/requirejs": "^2.1.31"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc --watch"
   },
   "repository": {
     "type": "git",
