@@ -22,10 +22,9 @@ export class StreamerListItem extends Singleton {
   }
 
   public render() {
+    let url = this._streamer.url;
     let listItem: JQuery<HTMLElement> = $(`<div></div>`).addClass("row");
-    $(listItem).on("click", () => {
-      window.open(this._streamer.url)
-    });
+    $(listItem).on("click", () => window.open(url));
 
     $(listItem).append(
       `<div class="col-xs-1">

@@ -8,6 +8,7 @@
       "es2017"
     ],
     "sourceMap": true,
+    "removeComments": true,
     "typeRoots": [
       "node_modules/@types"
     ],

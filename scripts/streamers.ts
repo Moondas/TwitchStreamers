@@ -51,7 +51,7 @@ class Streamers extends Singleton {
     
         // Exit iteration, if it doesn't meet any options, and drop older items by batchNo tagging
         if (!(this._batchNo == batchNo &&
-          (listFilter == "all" ||
+           (listFilter == "all" ||
             (listFilter == "online" && stream) ||
             (listFilter == "offline" && stream == null && !hasErrorCode)))
         ) {

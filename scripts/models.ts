@@ -25,7 +25,7 @@ export class Streamer {
   public fill(filler: Object) {
     Object.assign(this, filler);
     this.isOnline = this.status == "(Online)";   
-  }
+  }  
 }
 
 export class Singleton {
