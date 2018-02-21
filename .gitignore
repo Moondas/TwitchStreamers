@@ -1,6 +1,4 @@
 node_modules/
-scripts/*
-!scripts/*.ts
-!scripts/config.js
+scripts/*.map
 package-lock.json
 *.yaml
