@@ -1,5 +1,5 @@
-import { dictionary } from "./types";
-import { apiUrlTypes, Channel, Stream, Streamer, Singleton } from "./models";
+import { Dictionary } from "./types";
+import { ApiUrlTypes, Channel, Stream, Streamer, Singleton, TwitchStreamerAdapter } from "./models";
 import { StreamerListItem } from "./streamer-list-item";
 
 class Streamers extends Singleton {
@@ -16,7 +16,7 @@ class Streamers extends Singleton {
     "comster404"
   ];
 
-  private _apiUrls: apiUrlTypes = {
+  private _apiUrls: ApiUrlTypes = {
     streams: "https://wind-bow.glitch.me/twitch-api/streams/",
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
@@ -52,27 +52,27 @@ class Streamers extends Singleton {
     this.getStreamDatas(
       (stream, channel, user, batchNo) => {
         let hasErrorCode: boolean = (typeof channel.status === "number");
-    
+        
         this._updateLoader();
         // Exit iteration, if it doesn't meet any options, and drop older items by batchNo tagging
         if (!(this._batchNo == batchNo &&
-           (listFilter == "all" ||
-            (listFilter == "online" && stream) ||
-            (listFilter == "offline" && stream == null && !hasErrorCode)))
+          (listFilter == "all" ||
+          (listFilter == "online" && stream) ||
+          (listFilter == "offline" && stream == null && !hasErrorCode)))
         ) {
           return;
         }
-
-        this._streamerListItem.fill(stream, channel, user);
+        
+        this._streamerListItem.fill(
+          (<TwitchStreamerAdapter>TwitchStreamerAdapter.Instance).input(stream, channel, user)
+        );
         this._streamerListItem.render();
       }
     );
   }  
 
   private _updateLoader(): void {
-    let loader = $(".loader");
-
-    loader.css("width", 100 / this._leftFromLoad-- + "%");
+    $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
   }
 }
 

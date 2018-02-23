@@ -16,19 +16,8 @@ define(["require", "exports", "./models"], function (require, exports, models_1)
         function StreamerListItem() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
-        StreamerListItem.prototype.fill = function (stream, channel, user) {
-            channel = stream ? stream.channel : channel;
-            var hasErrorCode = (typeof channel.status === "number");
-            this._streamer = new models_1.Streamer();
-            this._streamer.fill({
-                name: channel.display_name ? channel.display_name : user,
-                status: hasErrorCode
-                    ? "" + (channel.status == 404 ? "(Not found)" : "(Closed)")
-                    : "" + (stream ? "(Online)" : "(Offline)"),
-                message: !hasErrorCode ? channel.status : "",
-                logo: !channel.logo ? "https://dummyimage.com/50x50/616161/cccccc.jpg&text=0x00" : channel.logo,
-                url: channel.url
-            });
+        StreamerListItem.prototype.fill = function (streamer) {
+            this._streamer = streamer;
         };
         StreamerListItem.prototype.render = function () {
             var url = this._streamer.url;

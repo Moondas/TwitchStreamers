@@ -1,27 +1,13 @@
-import { Channel, Stream, Streamer, Singleton } from "./models";
+import { Streamer, Singleton } from "./models";
 
 export class StreamerListItem extends Singleton {
   private _streamer: Streamer;
 
-  public fill(stream: Stream, channel: Channel, user: string) {
-    channel = stream ? stream.channel : channel;
-    let hasErrorCode = (typeof channel.status === "number");
-
-    this._streamer = new Streamer()
-    
-    this._streamer.fill({
-        name: channel.display_name ? channel.display_name : user,
-        status:
-          hasErrorCode
-            ? `${channel.status == 404 ? "(Not found)" : "(Closed)"}`
-            : `${stream ? `(Online)` : `(Offline)`}`,
-        message: !hasErrorCode ? <string>channel.status : "",
-        logo: !channel.logo ? "https://dummyimage.com/50x50/616161/cccccc.jpg&text=0x00" : channel.logo,
-        url: channel.url
-      });
+  public fill(streamer: Streamer): void {
+    this._streamer = streamer;
   }
 
-  public render() {
+  public render(): void {
     let url = this._streamer.url;
     let listItem: JQuery<HTMLElement> = $(`<div></div>`).addClass("row");
     $(listItem).on("click", () => window.open(url));

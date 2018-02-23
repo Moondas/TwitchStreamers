@@ -60,13 +60,12 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
                         (listFilter == "offline" && stream == null && !hasErrorCode)))) {
                     return;
                 }
-                _this._streamerListItem.fill(stream, channel, user);
+                _this._streamerListItem.fill(models_1.TwitchStreamerAdapter.Instance.input(stream, channel, user));
                 _this._streamerListItem.render();
             });
         };
         Streamers.prototype._updateLoader = function () {
-            var loader = $(".loader");
-            loader.css("width", 100 / this._leftFromLoad-- + "%");
+            $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
         };
         return Streamers;
     }(models_1.Singleton));
