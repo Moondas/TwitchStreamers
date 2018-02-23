@@ -41,6 +41,8 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
         Streamers.prototype.getStreamDatas = function (callback) {
             var _this = this;
             var batchNo = ++this._batchNo;
+            this._leftFromLoad = this._users.length;
+            this._updateLoader();
             this._users.forEach(function (user) {
                 $.when($.getJSON(_this._apiUrls.streams + user), $.getJSON(_this._apiUrls.channels + user)).done(function (stream, channel) { return callback(stream[0].stream, channel[0], user, batchNo); });
             });
@@ -51,6 +53,7 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
             this.clearList();
             this.getStreamDatas(function (stream, channel, user, batchNo) {
                 var hasErrorCode = (typeof channel.status === "number");
+                _this._updateLoader();
                 if (!(_this._batchNo == batchNo &&
                     (listFilter == "all" ||
                         (listFilter == "online" && stream) ||
@@ -60,6 +63,10 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
                 _this._streamerListItem.fill(stream, channel, user);
                 _this._streamerListItem.render();
             });
+        };
+        Streamers.prototype._updateLoader = function () {
+            var loader = $(".loader");
+            loader.css("width", 100 / this._leftFromLoad-- + "%");
         };
         return Streamers;
     }(models_1.Singleton));
