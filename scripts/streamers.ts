@@ -1,6 +1,5 @@
 import { Dictionary } from "./types";
 import { ApiUrlTypes, Channel, Stream, Streamer, Singleton, TwitchStreamerAdapter } from "./models";
-import { StreamerListItem } from "./streamer-list-item";
 
 class Streamers extends Singleton {
   private _users: string[] = [
@@ -15,21 +14,24 @@ class Streamers extends Singleton {
     "brunofin",
     "comster404"
   ];
-
   private _apiUrls: ApiUrlTypes = {
     streams: "https://wind-bow.glitch.me/twitch-api/streams/",
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
-
-  private _streamerListItem: StreamerListItem = StreamerListItem.Instance;
   private _batchNo: number = 0;
   private _leftFromLoad: number;
 
-  public clearList(): void {
+  private _clearList(): void {
     $(".main").empty();
   }
 
-  public getStreamDatas(callback: (stream: Stream, channel: Channel, user: string, batchNo?: number) => void): void {
+  private _updateLoader(): void {
+    $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
+  }
+
+  public getStreamDatas(
+    callback: (stream: Stream, channel: Channel, user: string, batchNo: number) => void
+  ): void {
     // This line is important to provide request order
     let batchNo = ++this._batchNo;
     this._leftFromLoad = this._users.length;
@@ -48,7 +50,7 @@ class Streamers extends Singleton {
   }
   
   public list(listFilter: string = "all"): void {
-    this.clearList();
+    this._clearList();
     this.getStreamDatas(
       (stream, channel, user, batchNo) => {
         let hasErrorCode: boolean = (typeof channel.status === "number");
@@ -63,16 +65,31 @@ class Streamers extends Singleton {
           return;
         }
         
-        this._streamerListItem.fill(
+        this.renderStreamerRow(
           (<TwitchStreamerAdapter>TwitchStreamerAdapter.Instance).input(stream, channel, user)
         );
-        this._streamerListItem.render();
       }
     );
-  }  
+  }
 
-  private _updateLoader(): void {
-    $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
+  public renderStreamerRow(streamer: Streamer): void {
+    let listItem: JQuery<HTMLElement> = $(`<div></div>`).addClass("row");
+    $(listItem).on("click", () => window.open(streamer.url));
+
+    $(listItem).append(
+      `<div class="col-xs-1">
+        <img src="${ streamer.logo }" class="img-circle${ !streamer.isOnline ? " offline" : "" }" alt="logo">
+      </div>`);
+
+    $(listItem).append(
+      `<div class="col-xs-11">
+        <p>${ streamer.name } ${ streamer.status }
+           ${ streamer.message ? `<br> ${ streamer.message }` : "" }
+        </p>
+      </div>`);
+
+    // Add online users to top of the list
+    streamer.isOnline ? $(".main").prepend(listItem) : $(".main").append(listItem);
   }
 }
 
