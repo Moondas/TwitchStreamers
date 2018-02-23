@@ -23,6 +23,7 @@ class Streamers extends Singleton {
 
   private _streamerListItem: StreamerListItem = StreamerListItem.Instance;
   private _batchNo: number = 0;
+  private _leftFromLoad: number;
 
   public clearList(): void {
     $(".main").empty();
@@ -31,6 +32,9 @@ class Streamers extends Singleton {
   public getStreamDatas(callback: (stream: Stream, channel: Channel, user: string, batchNo?: number) => void): void {
     // This line is important to provide request order
     let batchNo = ++this._batchNo;
+    this._leftFromLoad = this._users.length;
+    this._updateLoader();
+
     this._users.forEach(
       user => {
         $.when(
@@ -49,6 +53,7 @@ class Streamers extends Singleton {
       (stream, channel, user, batchNo) => {
         let hasErrorCode: boolean = (typeof channel.status === "number");
     
+        this._updateLoader();
         // Exit iteration, if it doesn't meet any options, and drop older items by batchNo tagging
         if (!(this._batchNo == batchNo &&
            (listFilter == "all" ||
@@ -63,6 +68,12 @@ class Streamers extends Singleton {
       }
     );
   }  
+
+  private _updateLoader(): void {
+    let loader = $(".loader");
+
+    loader.css("width", 100 / this._leftFromLoad-- + "%");
+  }
 }
 
 $( // Tab switcher for filter list

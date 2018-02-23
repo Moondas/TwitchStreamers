@@ -16,7 +16,7 @@ export class StreamerListItem extends Singleton {
             ? `${channel.status == 404 ? "(Not found)" : "(Closed)"}`
             : `${stream ? `(Online)` : `(Offline)`}`,
         message: !hasErrorCode ? <string>channel.status : "",
-        logo: !channel.logo ? "https://dummyimage.com/50x50/555555/777777.jpg&text=0x00" : channel.logo,
+        logo: !channel.logo ? "https://dummyimage.com/50x50/616161/cccccc.jpg&text=0x00" : channel.logo,
         url: channel.url
       });
   }
