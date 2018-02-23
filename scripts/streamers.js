@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-define(["require", "exports", "./models", "./streamer-list-item"], function (require, exports, models_1, streamer_list_item_1) {
+define(["require", "exports", "./models"], function (require, exports, models_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Streamers = (function (_super) {
@@ -31,12 +31,14 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
                 streams: "https://wind-bow.glitch.me/twitch-api/streams/",
                 channels: "https://wind-bow.glitch.me/twitch-api/channels/"
             };
-            _this._streamerListItem = streamer_list_item_1.StreamerListItem.Instance;
             _this._batchNo = 0;
             return _this;
         }
-        Streamers.prototype.clearList = function () {
+        Streamers.prototype._clearList = function () {
             $(".main").empty();
+        };
+        Streamers.prototype._updateLoader = function () {
+            $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
         };
         Streamers.prototype.getStreamDatas = function (callback) {
             var _this = this;
@@ -50,7 +52,7 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
         Streamers.prototype.list = function (listFilter) {
             var _this = this;
             if (listFilter === void 0) { listFilter = "all"; }
-            this.clearList();
+            this._clearList();
             this.getStreamDatas(function (stream, channel, user, batchNo) {
                 var hasErrorCode = (typeof channel.status === "number");
                 _this._updateLoader();
@@ -60,12 +62,15 @@ define(["require", "exports", "./models", "./streamer-list-item"], function (req
                         (listFilter == "offline" && stream == null && !hasErrorCode)))) {
                     return;
                 }
-                _this._streamerListItem.fill(models_1.TwitchStreamerAdapter.Instance.input(stream, channel, user));
-                _this._streamerListItem.render();
+                _this.renderStreamerRow(models_1.TwitchStreamerAdapter.Instance.input(stream, channel, user));
             });
         };
-        Streamers.prototype._updateLoader = function () {
-            $(".loader").css("width", 100 / this._leftFromLoad-- + "%");
+        Streamers.prototype.renderStreamerRow = function (streamer) {
+            var listItem = $("<div></div>").addClass("row");
+            $(listItem).on("click", function () { return window.open(streamer.url); });
+            $(listItem).append("<div class=\"col-xs-1\">\n        <img src=\"" + streamer.logo + "\" class=\"img-circle" + (!streamer.isOnline ? " offline" : "") + "\" alt=\"logo\">\n      </div>");
+            $(listItem).append("<div class=\"col-xs-11\">\n        <p>" + streamer.name + " " + streamer.status + "\n           " + (streamer.message ? "<br> " + streamer.message : "") + "\n        </p>\n      </div>");
+            streamer.isOnline ? $(".main").prepend(listItem) : $(".main").append(listItem);
         };
         return Streamers;
     }(models_1.Singleton));

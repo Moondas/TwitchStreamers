@@ -45,7 +45,6 @@ export class Singleton {
 }
 
 export class TwitchStreamerAdapter extends Singleton {
-
   public input(stream: Stream, channel: Channel, user: string): Streamer {
     channel = stream ? stream.channel : channel;
     let hasErrorCode = (typeof channel.status === "number");
