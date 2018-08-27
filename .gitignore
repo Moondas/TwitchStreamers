@@ -4,3 +4,4 @@ scripts/*
 !scripts/config.js
 package-lock.json
 *.yaml
+.scannerwork/

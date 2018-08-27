@@ -11,7 +11,7 @@ export interface Channel {
 }
 
 export interface Stream {
-  channel: Channel
+  channel: Channel;
 }
   
 export class Streamer {
@@ -39,8 +39,9 @@ export class Singleton {
   public static get Instance() {
     if (!this._instance) {
       return this._instance = new this;
+    } else {
+      return this._instance;
     }
-    return this._instance;    
   }
 }
 
