@@ -18,10 +18,6 @@ class Streamers extends Singleton {
     streams: "https://wind-bow.glitch.me/twitch-api/streams/",
     channels: "https://wind-bow.glitch.me/twitch-api/channels/"
   };
-  private _apiUrls3: ApiUrlTypes = {
-    streams: "https://wind-bow.glitch.me/twitch-api/streams/",
-    channels: "https://wind-bow.glitch.me/twitch-api/channels/"
-  };
   private _batchNo: number = 0;
   private _leftFromLoad: number;
 
