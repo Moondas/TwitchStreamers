@@ -39,9 +39,8 @@ export class Singleton {
   public static get Instance() {
     if (!this._instance) {
       return this._instance = new this;
-    } else {
-      return this._instance;
     }
+    return this._instance;
   }
 }
 
